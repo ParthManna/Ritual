@@ -85,7 +85,7 @@ We value your privacy. Ritual only collects your name and email for authenticati
 
 ## 👨‍💻 Author
 
-Developed with ❤️ by **Partha Sarathi Manna and Team**.
+Developed with ❤️ by **Partha Sarathi Manna**.
 
 ---
 
