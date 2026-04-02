@@ -31,23 +31,26 @@ class SupabaseService {
 
   static Future<AuthResponse> signInWithGoogle() async {
     try {
-      // IMPORTANT: This MUST start with 559273478063 to match your google-services.json
-      const webClientId = '559273478063-YOUR_ACTUAL_CLIENT_ID.apps.googleusercontent.com';
+      // Updated to match the prefix 1851124848859 from your Google Cloud Console screenshot
+      const webClientId = '1051124848059-dvtdrpvdotc43cn9f7idsrncl0aqbnei.apps.googleusercontent.com';
       
-      final GoogleSignIn googleSignIn = GoogleSignIn(
-        serverClientId: webClientId,
-      );
+      final GoogleSignIn googleSignIn = GoogleSignIn(serverClientId: webClientId);
+      
+      // Stronger than signOut() - it disconnects the account from the app, 
+      // forcing a fresh account selection next time.
+      try {
+        await googleSignIn.disconnect();
+      } catch (_) {}
       
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-      if (googleUser == null) throw Exception('Google sign-in cancelled by user');
+      
+      if (googleUser == null) throw Exception('Google sign-in cancelled');
 
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
       final idToken = googleAuth.idToken;
       final accessToken = googleAuth.accessToken;
 
-      if (idToken == null) {
-        throw Exception('No ID token received. Ensure the Web Client ID is correct.');
-      }
+      if (idToken == null) throw Exception('No ID token received from Google');
 
       return await _client.auth.signInWithIdToken(
         provider: OAuthProvider.google,
@@ -55,7 +58,7 @@ class SupabaseService {
         accessToken: accessToken,
       );
     } catch (e) {
-      print('Google Sign-In Error details: $e');
+      print('Google Sign-In Error: $e');
       rethrow;
     }
   }
@@ -92,6 +95,10 @@ class SupabaseService {
 
   static Future<void> signOut() async {
     await _client.auth.signOut();
+    // Also disconnect from Google to ensure fresh state
+    try {
+      await GoogleSignIn().disconnect();
+    } catch (_) {}
   }
 
   static Future<void> updateUserName(String name) async {
