@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Create iOS Build
+    name: Create iOS Simulator Build
     runs-on: macos-latest
 
     steps:
@@ -22,15 +22,20 @@ jobs:
 
       - name: Force Refresh iOS Files
         run: |
-          # Sometimes flutter create on Linux doesn't include everything for macOS/iOS
           flutter create --platforms=ios .
           flutter pub get
 
-      - name: Build iOS (Unsigned)
-        run: flutter build ios --release --no-codesign
+      - name: Build iOS for Simulator
+        # Appetize.io needs a simulator build (x86_64 or arm64)
+        run: flutter build ios --simulator --debug
+
+      - name: Zip the .app for Appetize
+        run: |
+          cd build/ios/iphonesimulator
+          zip -r ../../ritual_simulator.zip Runner.app
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Ritual-iOS-App
-          path: build/ios/iphoneos/Runner.app
+          name: Ritual-Simulator-App
+          path: build/ritual_simulator.zip
