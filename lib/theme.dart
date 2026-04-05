@@ -14,52 +14,54 @@ const kSubtext = Color(0xFF6B7280);
 const kBorder = Color(0xFFF1F1F1);
 
 class AppTheme {
-  static ThemeData get light => ThemeData(
-    useMaterial3: true,
-    fontFamily: 'Poppins',
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: kPrimary,
-      brightness: Brightness.light,
-    ),
-    scaffoldBackgroundColor: kBackground,
-    appBarTheme: const AppBarTheme(
-      backgroundColor: kBackground,
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      centerTitle: false,
-      titleTextStyle: TextStyle(
-        color: kText,
-        fontSize: 22,
-        fontWeight: FontWeight.w800,
-        fontFamily: 'Poppins',
+  static ThemeData get light {
+    final base = ThemeData.light();
+    return base.copyWith(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: kPrimary,
+        brightness: Brightness.light,
       ),
-      iconTheme: IconThemeData(color: kText),
-    ),
-    cardTheme: const CardTheme( // Changed back to CardTheme
-      color: kCard,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(20)),
-        side: BorderSide(color: kBorder),
+      scaffoldBackgroundColor: kBackground,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: kBackground,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        titleTextStyle: TextStyle(
+          color: kText,
+          fontSize: 22,
+          fontWeight: FontWeight.w800,
+          fontFamily: 'Poppins',
+        ),
+        iconTheme: IconThemeData(color: kText),
       ),
-    ),
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: Colors.grey.shade50,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
+      cardTheme: base.cardTheme.copyWith(
+        color: kCard,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: kBorder),
+        ),
       ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: Colors.grey.shade200),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.grey.shade50,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: Colors.grey.shade200),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: kPrimary, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        hintStyle: const TextStyle(color: kSubtext),
       ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: kPrimary, width: 2),
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      hintStyle: const TextStyle(color: kSubtext),
-    ),
-  );
+    );
+  }
 }
