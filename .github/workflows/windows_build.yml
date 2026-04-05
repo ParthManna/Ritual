@@ -23,23 +23,23 @@ jobs:
       - name: Enable Windows Support
         run: flutter config --enable-windows-desktop
 
-      - name: Install Dependencies
-        run: flutter pub get
+      - name: Clean and Rebuild Windows
+        run: |
+          flutter clean
+          flutter pub get
+          # This ensures the windows folder is correctly linked to your current pubspec plugins
+          flutter create --platforms=windows .
 
       - name: Build Windows Executable
-        run: flutter build windows --release
+        run: flutter build windows --release --verbose
 
-      - name: List Build Directory (Debug)
-        run: |
-          dir build\windows /s
+      - name: List Files for Debug
+        if: always()
+        run: dir /s build\windows
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
+        if: success()
         with:
           name: Ritual-Windows-App
-          # This pattern is more likely to catch the correct folder regardless of the specific architecture/case
-          path: |
-            build/windows/x64/runner/Release/
-            build/windows/runner/Release/
-            build/windows/x64/release/runner/
-          if-no-files-found: warn
+          path: build\windows\x64\release\runner\
