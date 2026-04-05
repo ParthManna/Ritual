@@ -26,7 +26,21 @@ class NotificationService {
     }
 
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
-    await _plugin.initialize(const InitializationSettings(android: android));
+    
+    // Added iOS/Darwin settings to prevent crash
+    const ios = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
+
+    await _plugin.initialize(
+      const InitializationSettings(
+        android: android,
+        iOS: ios, // Required for iOS
+        macOS: ios, // Required if targeting macOS
+      ),
+    );
 
     if (Platform.isAndroid) {
       await _plugin
@@ -64,6 +78,12 @@ class NotificationService {
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
+        ),
+        // Added iOS Details
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
