@@ -23,23 +23,27 @@ jobs:
       - name: Enable Windows Support
         run: flutter config --enable-windows-desktop
 
-      - name: Clean and Rebuild Windows
-        run: |
-          flutter clean
-          flutter pub get
-          # This ensures the windows folder is correctly linked to your current pubspec plugins
-          flutter create --platforms=windows .
-
       - name: Build Windows Executable
-        run: flutter build windows --release --verbose
+        run: |
+          flutter pub get
+          flutter build windows --release
 
-      - name: List Files for Debug
+      - name: List Build Files (Debug)
         if: always()
-        run: dir /s build\windows
+        shell: pwsh
+        run: |
+          if (Test-Path build\windows) {
+            Get-ChildItem -Path build\windows -Recurse -Filter "*.exe"
+          } else {
+            Write-Host "Build directory not found."
+          }
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
-        if: success()
         with:
           name: Ritual-Windows-App
-          path: build\windows\x64\release\runner\
+          # This search pattern will find the folder containing the .exe regardless of subfolder names
+          path: |
+            build/windows/x64/runner/Release/
+            build/windows/runner/Release/
+          if-no-files-found: error
