@@ -3,7 +3,7 @@ name: Build Windows Application
 on:
   push:
     branches: [ main, master ]
-  workflow_dispatch: # Allows you to run this manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,17 +20,20 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Install Dependencies
-        run: flutter pub get
-
       - name: Enable Windows Support
         run: flutter config --enable-windows-desktop
+
+      - name: Install Dependencies
+        run: |
+          flutter pub get
+          flutter doctor
 
       - name: Build Windows Executable
         run: flutter build windows --release --verbose
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
+        if: success()
         with:
           name: Ritual-Windows-App
           path: build/windows/x64/release/runner/
