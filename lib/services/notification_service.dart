@@ -3,7 +3,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io'; // Import this to use Platform check
+import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class NotificationService {
@@ -12,8 +12,8 @@ class NotificationService {
   static const _notifId = 1;
 
   static Future<void> init() async {
-    // If we are on Linux or Web, skip notification setup
-    if (!kIsWeb && Platform.isLinux) return;
+    // Skip initialization on platforms that don't support the notification plugin used here
+    if (kIsWeb || Platform.isLinux || Platform.isWindows) return;
 
     tz.initializeTimeZones();
 
@@ -28,11 +28,10 @@ class NotificationService {
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     await _plugin.initialize(const InitializationSettings(android: android));
 
-    // Only run this on Android
     if (Platform.isAndroid) {
       await _plugin
           .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
+              AndroidFlutterLocalNotificationsPlugin>()
           ?.requestNotificationsPermission();
     }
   }
@@ -41,6 +40,8 @@ class NotificationService {
     required int hour,
     required int minute,
   }) async {
+    if (kIsWeb || Platform.isLinux || Platform.isWindows) return;
+
     await _plugin.cancel(_notifId);
 
     final now = tz.TZDateTime.now(tz.local);
@@ -67,7 +68,7 @@ class NotificationService {
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
+          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
 
@@ -78,6 +79,8 @@ class NotificationService {
   }
 
   static Future<void> cancelReminder() async {
+    if (kIsWeb || Platform.isLinux || Platform.isWindows) return;
+
     await _plugin.cancel(_notifId);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('notif_enabled', false);
