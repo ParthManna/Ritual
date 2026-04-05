@@ -35,7 +35,7 @@ class AppTheme {
       ),
       iconTheme: IconThemeData(color: kText),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData( // Changed from CardTheme to CardThemeData
       color: kCard,
       elevation: 0,
       shape: RoundedRectangleBorder(
