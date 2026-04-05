@@ -110,14 +110,14 @@ class _MainShellState extends State<MainShell> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.auto_awesome_rounded, color: kPrimary, size: 40),
-              const SizedBox(height: 16),
-              const CircularProgressIndicator(color: kPrimary, strokeWidth: 2),
+              Icon(Icons.auto_awesome_rounded, color: kPrimary, size: 40),
+              SizedBox(height: 16),
+              CircularProgressIndicator(color: kPrimary, strokeWidth: 2),
             ],
           ),
         ),

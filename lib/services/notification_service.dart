@@ -3,6 +3,8 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io'; // Import this to use Platform check
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class NotificationService {
   static final _plugin = FlutterLocalNotificationsPlugin();
@@ -10,19 +12,29 @@ class NotificationService {
   static const _notifId = 1;
 
   static Future<void> init() async {
+    // If we are on Linux or Web, skip notification setup
+    if (!kIsWeb && Platform.isLinux) return;
+
     tz.initializeTimeZones();
 
-    // ← This is the critical line that was missing
-    final String localTimezone = await FlutterTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(localTimezone));
+    try {
+      final String localTimezone = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(localTimezone));
+    } catch (e) {
+      // Fallback if timezone detection fails
+      tz.setLocalLocation(tz.getLocation('UTC'));
+    }
 
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     await _plugin.initialize(const InitializationSettings(android: android));
 
-    await _plugin
-        .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
+    // Only run this on Android
+    if (Platform.isAndroid) {
+      await _plugin
+          .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestNotificationsPermission();
+    }
   }
 
   static Future<void> scheduleDailyReminder({
