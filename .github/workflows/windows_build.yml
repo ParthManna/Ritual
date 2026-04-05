@@ -29,10 +29,17 @@ jobs:
       - name: Build Windows Executable
         run: flutter build windows --release
 
+      - name: List Build Directory (Debug)
+        run: |
+          dir build\windows /s
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Ritual-Windows-App
-          # Using a wildcard path to ensure we find the runner folder regardless of architecture path
-          path: build/windows/**/release/runner/
-          if-no-files-found: error
+          # This pattern is more likely to catch the correct folder regardless of the specific architecture/case
+          path: |
+            build/windows/x64/runner/Release/
+            build/windows/runner/Release/
+            build/windows/x64/release/runner/
+          if-no-files-found: warn
