@@ -20,8 +20,11 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Install Dependencies
-        run: flutter pub get
+      - name: Force Refresh iOS Files
+        run: |
+          # Sometimes flutter create on Linux doesn't include everything for macOS/iOS
+          flutter create --platforms=ios .
+          flutter pub get
 
       - name: Build iOS (Unsigned)
         run: flutter build ios --release --no-codesign
