@@ -24,16 +24,15 @@ jobs:
         run: flutter config --enable-windows-desktop
 
       - name: Install Dependencies
-        run: |
-          flutter pub get
-          flutter doctor
+        run: flutter pub get
 
       - name: Build Windows Executable
-        run: flutter build windows --release --verbose
+        run: flutter build windows --release
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
-        if: success()
         with:
           name: Ritual-Windows-App
-          path: build/windows/x64/release/runner/
+          # Using a wildcard path to ensure we find the runner folder regardless of architecture path
+          path: build/windows/**/release/runner/
+          if-no-files-found: error
