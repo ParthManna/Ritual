@@ -1,0 +1,2 @@
+    flutter create --platforms=linux .
+    
