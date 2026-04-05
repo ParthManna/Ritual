@@ -35,12 +35,12 @@ class AppTheme {
       ),
       iconTheme: IconThemeData(color: kText),
     ),
-    cardTheme: CardThemeData( // Changed from CardTheme to CardThemeData
+    cardTheme: const CardTheme( // Changed back to CardTheme
       color: kCard,
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(color: kBorder),
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+        side: BorderSide(color: kBorder),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
